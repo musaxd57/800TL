@@ -3,30 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Standart Paket - 800 TL</title>
+    <title>Ödeme Sayfası - 800 TL Standart Paket</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* Styles from previous response */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .payment-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+            width: 350px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .package-info {
+            text-align: center;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input, select {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert {
+            display: none;
+            color: white;
+            background: red;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #FF9800;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #E68900;
+        }
+
+        .loading-spinner {
+            display: none;
+            margin-top: 20px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+        }
+
+        .success-check {
+            display: none;
+            font-size: 50px;
+            color: green;
+            margin: 20px 0;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
     <div class="payment-container">
-        <h2>Standart Paket - 800 TL</h2>
-        <form onsubmit="return validateForm()">
-            <label for="package">Paket Seçimi</label>
-            <input type="text" id="package" name="package" value="Standart Paket - 800 TL" disabled>
+        <div class="alert" id="alertBox">Lütfen geçerli bilgiler girin!</div>
+        <h2>Ödeme Bilgilerinizi Girin</h2>
+        <div class="package-info">800 TL Standart Paket</div> <!-- Paket adı ve fiyatı güncellendi -->
+        <form id="paymentForm" onsubmit="return validateForm()">
+            <!-- Paket bilgisi gizli alan olarak eklendi ve fiyat 800 TL yapıldı -->
+            <input type="hidden" id="package" value="800"> <!-- Paket bilgisi gizli alan olarak eklendi -->
 
-            <label for="expiry">Son Kullanma Tarihi (MM/YY)</label>
-            <input type="text" id="expiry" name="expiry" placeholder="MM/YY">
+            <label>E-Posta</label>
+            <input type="email" id="email" placeholder="example@mail.com" required>
+            <span class="error" id="emailError">Geçerli bir e-posta girin.</span>
+            
+            <label>Telefon Numarası</label>
+            <input type="tel" id="phone" placeholder="05XX XXX XX XX" required>
+            <span class="error" id="phoneError">Geçerli bir telefon numarası girin.</span>
 
-            <div id="expiryError" class="error"></div>
-            <div id="successAlert" class="alert">Ödeme Başarılı! Onaylandı ✅</div>
+            <label>Kart Numarası</label>
+            <input type="text" id="card" placeholder="1234 5678 9101 1121" maxlength="16" required>
+            <span class="error" id="cardError">Geçerli bir 16 haneli kart numarası girin.</span>
+
+            <label>Son Kullanma Tarihi</label>
+            <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" required>
+            <span class="error" id="expiryError">Geçerli bir son kullanma tarihi girin.</span>
+
+            <label>CVV</label>
+            <input type="password" id="cvv" placeholder="123" maxlength="3" required>
+            <span class="error" id="cvvError">Geçerli bir 3 haneli CVV girin.</span>
+
+            <label>Ad Soyad</label>
+            <input type="text" id="name" placeholder="Kart Üzerindeki Ad Soyad" required>
 
             <button type="submit">Ödemeyi Tamamla</button>
         </form>
+
+        <div class="loading-spinner" id="loadingSpinner"></div>
+        <div class="success-check" id="successCheck">&#10004;</div>
     </div>
 
     <script>
-        // JavaScript kodu burada
+        function validateForm() {
+            let isValid = true;
+            
+            const email = document.getElementById("email").value;
+            const phone = document.getElementById("phone").value;
+            const card = document.getElementById("card").value;
+            const expiry = document.getElementById("expiry").value;
+            const cvv = document.getElementById("cvv").value;
+            
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phonePattern = /^05\d{9}$/;
+            const cardPattern = /^\d{16}$/;
+            const expiryPattern = /^(0[1-9]|1[0-2])\/(\d{2})$/;
+            const cvvPattern = /^\d{3}$/;
+
+            document.getElementById("emailError").style.display = emailPattern.test(email) ? "none" : "block";
+            document.getElementById("phoneError").style.display = phonePattern.test(phone) ? "none" : "block";
+            document.getElementById("cardError").style.display = cardPattern.test(card) ? "none" : "block";
+            document.getElementById("expiryError").style.display = expiryPattern.test(expiry) ? "none" : "block";
+            document.getElementById("cvvError").style.display = cvvPattern.test(cvv) ? "none" : "block";
+            
+            if (!emailPattern.test(email) || !phonePattern.test(phone) || !cardPattern.test(card) || !expiryPattern.test(expiry) || !cvvPattern.test(cvv)) {
+                document.getElementById("alertBox").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("alertBox").style.display = "none";
+            }
+
+            if (isValid) {
+                // Loading Spinner'ı gösteriyoruz
+                document.getElementById("loadingSpinner").style.display = "block";
+                // Ödeme başarılı olduğunda
+                setTimeout(() => {
+                    document.getElementById("loadingSpinner").style.display = "none";
+                    document.getElementById("successCheck").style.display = "block";
+                }, 2000); // 2 saniye sonra başarı işareti
+            }
+            return isValid;
+        }
     </script>
 </body>
 </html>
