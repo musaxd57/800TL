@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ödeme Sayfası - Temel Paket</title>
+    <title>Ödeme Sayfası - Standart Paket</title>
     <link rel="stylesheet" href="style.css">
     <style>
         body {
@@ -110,23 +110,9 @@
     <div class="payment-container">
         <div class="alert" id="alertBox">Lütfen geçerli bilgiler girin!</div>
         <h2>Ödeme Bilgilerinizi Girin</h2>
-        <div class="package-info">600 TL Temel Paket</div>
+        <div class="package-info">800 TL Standart Paket</div>
         <form id="paymentForm" onsubmit="return validateForm()">
-            <input type="hidden" id="package" value="600">
-
-            <label>Paket Dili Seçin</label>
-            <select id="language">
-                <option value="tr">Türkçe</option>
-                <option value="en">English</option>
-                <option value="de">Deutsch</option>
-            </select>
-
-            <label>Altyazı Dili Seçin</label>
-            <select id="subtitleLanguage">
-                <option value="tr">Türkçe</option>
-                <option value="en">English</option>
-                <option value="de">Deutsch</option>
-            </select>
+            <input type="hidden" id="package" value="800">
 
             <label>E-Posta</label>
             <input type="email" id="email" placeholder="example@mail.com" required>
