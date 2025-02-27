@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ödeme Sayfası - 800 TL Standart Paket</title>
+    <title>Ödeme Sayfası - Temel Paket</title>
     <link rel="stylesheet" href="style.css">
     <style>
         body {
@@ -110,10 +110,23 @@
     <div class="payment-container">
         <div class="alert" id="alertBox">Lütfen geçerli bilgiler girin!</div>
         <h2>Ödeme Bilgilerinizi Girin</h2>
-        <div class="package-info">800 TL Standart Paket</div> <!-- Paket adı ve fiyatı güncellendi -->
+        <div class="package-info">600 TL Temel Paket</div>
         <form id="paymentForm" onsubmit="return validateForm()">
-            <!-- Paket bilgisi gizli alan olarak eklendi ve fiyat 800 TL yapıldı -->
-            <input type="hidden" id="package" value="800"> <!-- Paket bilgisi gizli alan olarak eklendi -->
+            <input type="hidden" id="package" value="600">
+
+            <label>Paket Dili Seçin</label>
+            <select id="language">
+                <option value="tr">Türkçe</option>
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+            </select>
+
+            <label>Altyazı Dili Seçin</label>
+            <select id="subtitleLanguage">
+                <option value="tr">Türkçe</option>
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+            </select>
 
             <label>E-Posta</label>
             <input type="email" id="email" placeholder="example@mail.com" required>
@@ -144,47 +157,5 @@
         <div class="loading-spinner" id="loadingSpinner"></div>
         <div class="success-check" id="successCheck">&#10004;</div>
     </div>
-
-    <script>
-        function validateForm() {
-            let isValid = true;
-            
-            const email = document.getElementById("email").value;
-            const phone = document.getElementById("phone").value;
-            const card = document.getElementById("card").value;
-            const expiry = document.getElementById("expiry").value;
-            const cvv = document.getElementById("cvv").value;
-            
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            const phonePattern = /^05\d{9}$/;
-            const cardPattern = /^\d{16}$/;
-            const expiryPattern = /^(0[1-9]|1[0-2])\/(\d{2})$/;
-            const cvvPattern = /^\d{3}$/;
-
-            document.getElementById("emailError").style.display = emailPattern.test(email) ? "none" : "block";
-            document.getElementById("phoneError").style.display = phonePattern.test(phone) ? "none" : "block";
-            document.getElementById("cardError").style.display = cardPattern.test(card) ? "none" : "block";
-            document.getElementById("expiryError").style.display = expiryPattern.test(expiry) ? "none" : "block";
-            document.getElementById("cvvError").style.display = cvvPattern.test(cvv) ? "none" : "block";
-            
-            if (!emailPattern.test(email) || !phonePattern.test(phone) || !cardPattern.test(card) || !expiryPattern.test(expiry) || !cvvPattern.test(cvv)) {
-                document.getElementById("alertBox").style.display = "block";
-                isValid = false;
-            } else {
-                document.getElementById("alertBox").style.display = "none";
-            }
-
-            if (isValid) {
-                // Loading Spinner'ı gösteriyoruz
-                document.getElementById("loadingSpinner").style.display = "block";
-                // Ödeme başarılı olduğunda
-                setTimeout(() => {
-                    document.getElementById("loadingSpinner").style.display = "none";
-                    document.getElementById("successCheck").style.display = "block";
-                }, 2000); // 2 saniye sonra başarı işareti
-            }
-            return isValid;
-        }
-    </script>
 </body>
 </html>
